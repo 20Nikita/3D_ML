@@ -1,17 +1,10 @@
 import torch
 import pyredner
 import h5py
-import urllib
-import time
 
-from matplotlib.pyplot import imshow
 from matplotlib.pyplot import imsave
 
-import matplotlib.pyplot as plt
-from IPython.display import display, clear_output
-from matplotlib import animation
 
-from IPython.display import HTML
 
 # Load the Basel face model
 with h5py.File(r'drive/MyDrive/model2017-1_bfm_nomouth.h5', 'r') as hf:
@@ -101,8 +94,6 @@ optimizer = torch.optim.Adam(
 cam_optimizer = torch.optim.Adam([cam_pos, cam_look_at], lr=0.5)
 
 
-imgs, losses = [], []
-
 # Run 500 Adam iterations
 num_iters = 500
 for t in range(num_iters):
@@ -127,13 +118,9 @@ for t in range(num_iters):
     ambient_color.data.clamp_(0.0)
     dir_light_intensity.data.clamp_(0.0)
 
-    # Plot the loss
-    losses.append(loss.data.item())
 
     # Only store images every 10th iterations
     if t % 10 == 0:
-        # Record the Gamma corrected image
-        imgs.append(torch.pow(img.data, 1.0/2.2).cpu().numpy()) 
         print(t, num_iters, loss.data.item())
         imsave(f'imgs/train_{t}.png',torch.pow(img.data, 1.0/2.2).cpu().numpy())
 
